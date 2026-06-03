@@ -10,6 +10,7 @@ const App = () => {
   const [currentNumber, setCurrentNumber] = useState('0');
   const [firstNumber, setFirstNumber] = useState('0');
   const [operation, setOperation] = useState('');
+  const [history, setHistory] = useState([]);
 
   const handleOnClear = () => {
     setCurrentNumber('0')
@@ -50,18 +51,30 @@ const App = () => {
   }
 
   const handleEquals = () => {
-
     if(firstNumber !== '0' && operation !== '' && currentNumber !== '0'){
-        switch(operation){
-          case '+':
-            handleSumNumbers();
-            break;
-          case '-':
-            handleMinusNumbers();
-            break;
-          default: 
-            break;
-        }
+    const first = Number(firstNumber);
+    const second = Number(currentNumber);
+    let result = 0;
+
+         switch(operation){
+      case '+':
+        result = first + second;
+        break;
+      case '-':
+        result = first - second;
+        break;
+      default:
+        return;
+     }
+         setHistory(prev => [
+      ...prev,
+      `${firstNumber} ${operation} ${currentNumber} = ${result}`
+    ]);
+
+    setCurrentNumber(String(result));
+    setFirstNumber('0');
+    setOperation('');
+
     }
 
   }
@@ -95,6 +108,17 @@ const App = () => {
           <Button label="=" onClick={handleEquals}/>
         </Row>
       </Content>
+      <div>
+  <h3>Histórico</h3>
+
+  {history.length === 0 ? (
+    <p>Nenhum cálculo ainda</p>
+  ) : (
+    history.map((item, index) => (
+      <p key={index}>{item}</p>
+    ))
+  )}
+</div>
     </Container>
   );
 }
